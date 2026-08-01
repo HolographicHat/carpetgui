@@ -426,6 +426,7 @@ public class RulesCacheManager {
                     obj.get("defaultValue").getAsString(),
                     description,
                     localDescription,
+                    "",
                     List.of(),
                     List.of()
             );

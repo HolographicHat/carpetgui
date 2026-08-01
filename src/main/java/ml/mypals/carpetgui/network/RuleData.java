@@ -20,8 +20,12 @@
 
 package ml.mypals.carpetgui.network;
 
+import carpet.CarpetServer;
+import ml.mypals.carpetgui.screen.ScreenUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.PlainTextContents;
 
 import java.util.List;
 import java.util.Map;
@@ -35,6 +39,7 @@ public class RuleData {
     public String value;
     public String description;
     public String localDescription;
+    public String extra;
     public Class<?> type;
     public List<String> suggestions;
     public List<Map.Entry<String, String>> categories;
@@ -48,12 +53,13 @@ public class RuleData {
         this.value = "";
         this.description = "";
         this.localDescription = "";
+        this.extra = "";
         this.type = getClass();
         this.suggestions = List.of();
         this.categories = List.of();
     }
 
-    public RuleData(String manager, String name, String localName, Class<?> type, String defaultValue, String value, String description, String localDescription, List<String> suggestions, List<Map.Entry<String, String>> categories) {
+    public RuleData(String manager, String name, String localName, Class<?> type, String defaultValue, String value, String description, String localDescription, String extra, List<String> suggestions, List<Map.Entry<String, String>> categories) {
         this.manager = manager;
         this.name = name;
         this.localName = localName;
@@ -61,6 +67,7 @@ public class RuleData {
         this.value = value;
         this.description = description;
         this.localDescription = localDescription;
+        this.extra = extra;
         this.type = type;
         this.suggestions = suggestions;
         this.categories = categories;
@@ -80,6 +87,8 @@ public class RuleData {
         buf.writeUtf(this.description);
         buf.writeUtf(this.localDescription);
 
+        buf.writeUtf(this.extra);
+
         buf.writeCollection(suggestions, FriendlyByteBuf::writeUtf);
         buf.writeCollection(categories, (bf, entry) -> {
             bf.writeUtf(entry.getKey());
@@ -97,6 +106,7 @@ public class RuleData {
                 buf.readUtf(), // value
                 buf.readUtf(), //desc
                 buf.readUtf(), //localDesc
+                buf.readUtf(), //extra
                 buf.readList(FriendlyByteBuf::readUtf), //suggestions
                 buf.readList((bf) -> Map.entry(bf.readUtf(), bf.readUtf())) //categories
         );
@@ -120,6 +130,23 @@ public class RuleData {
             case "Enum" -> Enum.class;
             default -> String.class;
         };
+    }
+
+    public static String getExtraDesc(String name) {
+        return c(CarpetServer.settingsManager.getCarpetRule(name).extraInfo()).getString();
+    }
+
+    public static Component c(List<Component> list) {
+        if (list.isEmpty()) return Component.empty();
+
+        var var0 = MutableComponent.create(PlainTextContents.EMPTY);
+        if (!ScreenUtils.pressShift) return var0.append("\n")
+                .append(Component.translatable("gui.screen.tooltip.extra"));
+        for (Component component : list) {
+            var0.append("\n" + component.getString());
+        }
+
+        return var0;
     }
 
 }
