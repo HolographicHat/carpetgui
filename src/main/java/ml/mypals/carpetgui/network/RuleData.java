@@ -21,6 +21,7 @@
 package ml.mypals.carpetgui.network;
 
 import carpet.CarpetServer;
+import carpet.api.settings.CarpetRule;
 import ml.mypals.carpetgui.screen.ScreenUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -133,13 +134,18 @@ public class RuleData {
     }
 
     public static String getExtraDesc(String name) {
+        if (CarpetServer.settingsManager.getCarpetRule(name) == null) return "";
         return c(CarpetServer.settingsManager.getCarpetRule(name).extraInfo()).getString();
     }
 
     public static Component c(List<Component> list) {
         if (list.isEmpty()) return Component.empty();
 
+        //? if >1.20.1 {
         var var0 = MutableComponent.create(PlainTextContents.EMPTY);
+        //?} else {
+        /*var var0 = MutableComponent.create(ComponentContents.EMPTY);
+         *///?}
         if (!ScreenUtils.pressShift) return var0.append("\n")
                 .append(Component.translatable("gui.screen.tooltip.extra"));
         for (Component component : list) {

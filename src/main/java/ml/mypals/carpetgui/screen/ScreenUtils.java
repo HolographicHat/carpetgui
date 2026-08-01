@@ -242,8 +242,13 @@ public class ScreenUtils {
         }
         tip.append("]");
 
-        if (pressShift) tip.append(Component.literal(ruleData.extra).withStyle(ChatFormatting.DARK_GRAY));
-        else tip.append(Component.literal(ruleData.extra).withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC));
+        if (pressShift && !ruleData.extra.isEmpty()) {
+            ruleData.extra = RuleData.getExtraDesc(ruleData.name);
+            tip.append(Component.literal(ruleData.extra).withStyle(ChatFormatting.DARK_GRAY));
+        } else if (!ruleData.extra.isEmpty()) {
+            ruleData.extra = RuleData.getExtraDesc(ruleData.name);
+            tip.append(Component.literal(ruleData.extra).withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC));
+        }
 
         return tip;
     }

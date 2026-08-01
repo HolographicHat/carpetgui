@@ -17,6 +17,7 @@ import ml.mypals.carpetgui.screen.ruleGroup.RuleCommand;
 import ml.mypals.carpetgui.screen.ruleGroup.RuleGroup;
 import ml.mypals.carpetgui.screen.ruleGroup.RuleGroupLoader;
 import ml.mypals.carpetgui.screen.ruleGroup.RuleGroupScreen;
+import ml.mypals.carpetgui.screen.ruleStack.RuleStackScreen;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -176,10 +177,34 @@ public class RulesEditScreen extends BaseOwoScreen<FlowLayout> {
                 ScreenUtils.showSaveGroupDialog(this.uiAdapter.rootComponent, dialogOverlay);
             }
         });
+        ScreenKeyboardEvents.afterKeyPress(this).register((screen, key, scancode, modifiers) -> {
+            if (key == GLFW.GLFW_KEY_LEFT_SHIFT || key == GLFW.GLFW_KEY_RIGHT_SHIFT) {
+                ScreenUtils.pressShift = true;
+                this.refreshScreen();
+            }
+        });
+        ScreenKeyboardEvents.afterKeyRelease(this).register((screen, key, scancode, modifiers) -> {
+            if (key == GLFW.GLFW_KEY_LEFT_SHIFT || key == GLFW.GLFW_KEY_RIGHT_SHIFT) {
+                ScreenUtils.pressShift = false;
+                this.refreshScreen();
+            }
+        });
         *///?} else {
         ScreenKeyboardEvents.afterKeyPress(this).register((screen, key) -> {
             if ((key.modifiers() & GLFW.GLFW_MOD_CONTROL) != 0 && key.key() == GLFW.GLFW_KEY_S) {
                 ScreenUtils.showSaveGroupDialog(this.uiAdapter.rootComponent, dialogOverlay);
+            }
+        });
+        ScreenKeyboardEvents.afterKeyPress(this).register((screen, key) -> {
+            if (key.key() == GLFW.GLFW_KEY_LEFT_SHIFT || key.key() == GLFW.GLFW_KEY_RIGHT_SHIFT) {
+                ScreenUtils.pressShift = true;
+                this.refreshScreen();
+            }
+        });
+        ScreenKeyboardEvents.afterKeyRelease(this).register((screen, key) -> {
+            if (key.key() == GLFW.GLFW_KEY_LEFT_SHIFT || key.key() == GLFW.GLFW_KEY_RIGHT_SHIFT) {
+                ScreenUtils.pressShift = false;
+                this.refreshScreen();
             }
         });
         //?}

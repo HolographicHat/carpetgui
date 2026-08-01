@@ -16,6 +16,7 @@ import ml.mypals.carpetgui.network.server.RuleStackSyncPayload;
 import ml.mypals.carpetgui.screen.ScreenTabBar;
 import ml.mypals.carpetgui.screen.ScreenUtils;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -79,6 +80,35 @@ public class RuleStackScreen extends BaseOwoScreen<FlowLayout> {
         master.getValue().child(buildRightPanel());
         root.child(master.getKey());
         requestSync();
+
+        //? if <1.21.9 {
+        /*ScreenKeyboardEvents.afterKeyPress(this).register((screen, key, scancode, modifiers) -> {
+            if (key == GLFW.GLFW_KEY_LEFT_SHIFT || key == GLFW.GLFW_KEY_RIGHT_SHIFT) {
+                ScreenUtils.pressShift = true;
+                this.onSync();
+            }
+        });
+        ScreenKeyboardEvents.afterKeyRelease(this).register((screen, key, scancode, modifiers) -> {
+            if (key == GLFW.GLFW_KEY_LEFT_SHIFT || key == GLFW.GLFW_KEY_RIGHT_SHIFT) {
+                ScreenUtils.pressShift = false;
+                this.onSync();
+            }
+        });
+        *///?} else {
+        ScreenKeyboardEvents.afterKeyPress(this).register((screen, key) -> {
+            if (key.key() == GLFW.GLFW_KEY_LEFT_SHIFT || key.key() == GLFW.GLFW_KEY_RIGHT_SHIFT) {
+                ScreenUtils.pressShift = true;
+                this.onSync();
+            }
+        });
+        ScreenKeyboardEvents.afterKeyRelease(this).register((screen, key) -> {
+            if (key.key() == GLFW.GLFW_KEY_LEFT_SHIFT || key.key() == GLFW.GLFW_KEY_RIGHT_SHIFT) {
+                ScreenUtils.pressShift = false;
+                this.onSync();
+            }
+        });
+        //?}
+
         return master.getKey();
     }
 
