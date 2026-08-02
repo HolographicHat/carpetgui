@@ -14,12 +14,9 @@ import ml.mypals.carpetgui.network.RuleData;
 import ml.mypals.carpetgui.network.client.RequestRuleStackPayload;
 import ml.mypals.carpetgui.network.server.RuleStackSyncPayload;
 import ml.mypals.carpetgui.screen.ScreenTabBar;
-import ml.mypals.carpetgui.screen.ScreenUtils;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -34,7 +31,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static ml.mypals.carpetgui.CarpetGUIClient.cachedCompleteRules;
-import static ml.mypals.carpetgui.CarpetGUIClient.cachedRuleStackData;
 import static ml.mypals.carpetgui.screen.ScreenUtils.*;
 
 public class RuleStackScreen extends BaseOwoScreen<FlowLayout> {
@@ -80,35 +76,6 @@ public class RuleStackScreen extends BaseOwoScreen<FlowLayout> {
         master.getValue().child(buildRightPanel());
         root.child(master.getKey());
         requestSync();
-
-        //? if <1.21.9 {
-        /*ScreenKeyboardEvents.afterKeyPress(this).register((screen, key, scancode, modifiers) -> {
-            if (key == GLFW.GLFW_KEY_LEFT_SHIFT || key == GLFW.GLFW_KEY_RIGHT_SHIFT) {
-                ScreenUtils.pressShift = true;
-                this.onSync();
-            }
-        });
-        ScreenKeyboardEvents.afterKeyRelease(this).register((screen, key, scancode, modifiers) -> {
-            if (key == GLFW.GLFW_KEY_LEFT_SHIFT || key == GLFW.GLFW_KEY_RIGHT_SHIFT) {
-                ScreenUtils.pressShift = false;
-                this.onSync();
-            }
-        });
-        *///?} else {
-        ScreenKeyboardEvents.afterKeyPress(this).register((screen, key) -> {
-            if (key.key() == GLFW.GLFW_KEY_LEFT_SHIFT || key.key() == GLFW.GLFW_KEY_RIGHT_SHIFT) {
-                ScreenUtils.pressShift = true;
-                this.onSync();
-            }
-        });
-        ScreenKeyboardEvents.afterKeyRelease(this).register((screen, key) -> {
-            if (key.key() == GLFW.GLFW_KEY_LEFT_SHIFT || key.key() == GLFW.GLFW_KEY_RIGHT_SHIFT) {
-                ScreenUtils.pressShift = false;
-                this.onSync();
-            }
-        });
-        //?}
-
         return master.getKey();
     }
 

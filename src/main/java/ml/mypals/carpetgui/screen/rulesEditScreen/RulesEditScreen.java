@@ -17,7 +17,6 @@ import ml.mypals.carpetgui.screen.ruleGroup.RuleCommand;
 import ml.mypals.carpetgui.screen.ruleGroup.RuleGroup;
 import ml.mypals.carpetgui.screen.ruleGroup.RuleGroupLoader;
 import ml.mypals.carpetgui.screen.ruleGroup.RuleGroupScreen;
-import ml.mypals.carpetgui.screen.ruleStack.RuleStackScreen;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -42,6 +41,7 @@ public class RulesEditScreen extends BaseOwoScreen<FlowLayout> {
     public boolean instantAffect;
     private FlowLayout saveDialog;
     private OverlayContainer<FlowLayout> dialogOverlay;
+    private final List<RuleWidget> currentRuleWidgets = new ArrayList<>();
     public double lastCategoryScroll = 0;
     public double lastRuleListScroll = 0;
     public String currentCategory = "unknown";
@@ -198,17 +198,24 @@ public class RulesEditScreen extends BaseOwoScreen<FlowLayout> {
         ScreenKeyboardEvents.afterKeyPress(this).register((screen, key) -> {
             if (key.key() == GLFW.GLFW_KEY_LEFT_SHIFT || key.key() == GLFW.GLFW_KEY_RIGHT_SHIFT) {
                 ScreenUtils.pressShift = true;
-                this.refreshScreen();
+                this.updateRuleTooltips();
             }
         });
         ScreenKeyboardEvents.afterKeyRelease(this).register((screen, key) -> {
             if (key.key() == GLFW.GLFW_KEY_LEFT_SHIFT || key.key() == GLFW.GLFW_KEY_RIGHT_SHIFT) {
                 ScreenUtils.pressShift = false;
-                this.refreshScreen();
+                this.updateRuleTooltips();
             }
         });
         //?}
         return master.getKey();
+    }
+
+    private void updateRuleTooltips() {
+        String query = searching ? searchBox.getValue() : "";
+        for (RuleWidget widget : currentRuleWidgets) {
+            widget.updateTooltip(query);
+        }
     }
 
     private void saveModifiedRulesAsGroup(String groupName) {
@@ -366,10 +373,15 @@ public class RulesEditScreen extends BaseOwoScreen<FlowLayout> {
 
     private void rebuildRulesList(Stream<RuleData> stream, String query) {
         rulesListLayout.clearChildren();
+        this.currentRuleWidgets.clear();
         stream.sorted(Comparator.comparing(rule -> {
             String en = rule.name;
             return en.isEmpty() ? "" : en.toLowerCase().substring(0, 1);
-        })).forEach(r -> rulesListLayout.child(new RuleWidget(r, this, query).buildComponent()));
+        })).forEach(r -> {
+            RuleWidget widget = new RuleWidget(r, this, query);
+            rulesListLayout.child(widget.buildComponent());
+            this.currentRuleWidgets.add(widget);
+        });
     }
 
     private FlowLayout buildCategoryRow(String name) {

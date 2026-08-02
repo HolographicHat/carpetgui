@@ -562,7 +562,7 @@ public class RulesCacheManager {
             rule.extraDescription = this.extraDescription;
             rule.localName = this.localName.getOrDefault(lang, this.name);
             rule.localDescription = this.localDescription.getOrDefault(lang, this.description);
-            rule.localExtra = this.localExtra.getOrDefault(lang, this.description);
+            rule.localExtra = this.localExtra.getOrDefault(lang, this.extraDescription);
             List<Map.Entry<String, String>> cats = new ArrayList<>();
             Map<String, String> catValueMap = knowCategories.stream()
                     .collect(Collectors.toMap(c -> c.key, c -> c.value.getOrDefault(lang, c.key)));
