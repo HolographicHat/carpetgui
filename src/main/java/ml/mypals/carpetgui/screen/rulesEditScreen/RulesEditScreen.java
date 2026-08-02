@@ -178,15 +178,15 @@ public class RulesEditScreen extends BaseOwoScreen<FlowLayout> {
             }
         });
         ScreenKeyboardEvents.afterKeyPress(this).register((screen, key, scancode, modifiers) -> {
-            if (key == GLFW.GLFW_KEY_LEFT_SHIFT || key == GLFW.GLFW_KEY_RIGHT_SHIFT) {
+            if ((key == GLFW.GLFW_KEY_LEFT_SHIFT || key == GLFW.GLFW_KEY_RIGHT_SHIFT) && !ScreenUtils.pressShift) {
                 ScreenUtils.pressShift = true;
-                this.refreshScreen();
+                this.updateRuleTooltips();
             }
         });
         ScreenKeyboardEvents.afterKeyRelease(this).register((screen, key, scancode, modifiers) -> {
-            if (key == GLFW.GLFW_KEY_LEFT_SHIFT || key == GLFW.GLFW_KEY_RIGHT_SHIFT) {
+            if ((key == GLFW.GLFW_KEY_LEFT_SHIFT || key == GLFW.GLFW_KEY_RIGHT_SHIFT) && ScreenUtils.pressShift) {
                 ScreenUtils.pressShift = false;
-                this.refreshScreen();
+                this.updateRuleTooltips();
             }
         });
         *///?} else {
@@ -196,13 +196,13 @@ public class RulesEditScreen extends BaseOwoScreen<FlowLayout> {
             }
         });
         ScreenKeyboardEvents.afterKeyPress(this).register((screen, key) -> {
-            if (key.key() == GLFW.GLFW_KEY_LEFT_SHIFT || key.key() == GLFW.GLFW_KEY_RIGHT_SHIFT) {
+            if ((key.key() == GLFW.GLFW_KEY_LEFT_SHIFT || key.key() == GLFW.GLFW_KEY_RIGHT_SHIFT) && !ScreenUtils.pressShift) {
                 ScreenUtils.pressShift = true;
                 this.updateRuleTooltips();
             }
         });
         ScreenKeyboardEvents.afterKeyRelease(this).register((screen, key) -> {
-            if (key.key() == GLFW.GLFW_KEY_LEFT_SHIFT || key.key() == GLFW.GLFW_KEY_RIGHT_SHIFT) {
+            if ((key.key() == GLFW.GLFW_KEY_LEFT_SHIFT || key.key() == GLFW.GLFW_KEY_RIGHT_SHIFT) && ScreenUtils.pressShift) {
                 ScreenUtils.pressShift = false;
                 this.updateRuleTooltips();
             }
