@@ -242,12 +242,10 @@ public class ScreenUtils {
         }
         tip.append("]");
 
-        if (pressShift && !ruleData.extra.isEmpty()) {
-            ruleData.extra = RuleData.getExtraDesc(ruleData.name);
-            tip.append(Component.literal(ruleData.extra).withStyle(ChatFormatting.DARK_GRAY));
-        } else if (!ruleData.extra.isEmpty()) {
-            ruleData.extra = RuleData.getExtraDesc(ruleData.name);
-            tip.append(Component.literal(ruleData.extra).withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC));
+        if (pressShift && (!ruleData.extraDescription.isEmpty() || !ruleData.localExtra.isEmpty())) {
+            tip.append(Component.literal(ruleData.localExtra.isEmpty() ? ruleData.extraDescription : ruleData.localExtra).withStyle(ChatFormatting.DARK_GRAY));
+        } else if (!ruleData.extraDescription.isEmpty() || !ruleData.localExtra.isEmpty()) {
+            tip.append("\n").append(Component.translatable("gui.screen.tooltip.extra").withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC));
         }
 
         return tip;

@@ -165,6 +165,7 @@ public class CarpetGUI implements ModInitializer, CarpetExtension {
                     rule.getDescriptionId(),
                     rule.getDescriptionId(),
                     "",
+                    "",
                     argumentBuilder.getType().getExamples().stream().toList(),
                     List.of(Map.entry("gamerule", "gui.category.gamerules" + " : " + rule.getCategory().getDescriptionId()))
             ));
@@ -182,6 +183,7 @@ public class CarpetGUI implements ModInitializer, CarpetExtension {
                     String.valueOf(gameRules.get(rule)),
                     rule.getDescriptionId(),
                     rule.getDescriptionId(),
+                    "",
                     "",
                     rule.argument().getExamples().stream().toList(),
                     List.of(Map.entry("gamerule", "gui.category.gamerules" + " : " + rule.category().getDescriptionId()))
@@ -211,10 +213,12 @@ public class CarpetGUI implements ModInitializer, CarpetExtension {
 
         Map<CarpetRule<?>, String> enNames = new HashMap<>();
         Map<CarpetRule<?>, String> enDescs = new HashMap<>();
+        Map<CarpetRule<?>, String> enExtras = new HashMap<>();
 
         settingsManager.getCarpetRules().forEach(rule -> {
             enNames.put(rule, rule.name());
             enDescs.put(rule, RuleHelper.translatedDescription(rule));
+            enExtras.put(rule, RuleData.getExtraDesc(rule.name(), rule.settingsManager()));
         });
 
         CarpetSettings.language = lang;
@@ -224,7 +228,7 @@ public class CarpetGUI implements ModInitializer, CarpetExtension {
 
             String localName = RuleHelper.translatedName(rule);
             String localDescription = RuleHelper.translatedDescription(rule);
-            String extra = RuleData.getExtraDesc(rule.name());
+            String localExtra = RuleData.getExtraDesc(rule.name(), rule.settingsManager());
 
             List<Map.Entry<String, String>> translatedCategories =
                     rule.categories().stream()
@@ -243,7 +247,8 @@ public class CarpetGUI implements ModInitializer, CarpetExtension {
                     rule.value().toString().toLowerCase(),
                     enDescs.get(rule),
                     localDescription,
-                    extra,
+                    enExtras.get(rule),
+                    localExtra,
                     rule.suggestions().stream().toList(),
                     translatedCategories
             ));

@@ -20,13 +20,15 @@
 
 package ml.mypals.carpetgui.network;
 
-import carpet.CarpetServer;
-import carpet.api.settings.CarpetRule;
-import ml.mypals.carpetgui.screen.ScreenUtils;
+import carpet.api.settings.SettingsManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+//? if >1.20.1 {
 import net.minecraft.network.chat.contents.PlainTextContents;
+//?} else {
+/*import net.minecraft.network.chat.ComponentContents;
+ *///?}
 
 import java.util.List;
 import java.util.Map;
@@ -40,7 +42,8 @@ public class RuleData {
     public String value;
     public String description;
     public String localDescription;
-    public String extra;
+    public String extraDescription;
+    public String localExtra;
     public Class<?> type;
     public List<String> suggestions;
     public List<Map.Entry<String, String>> categories;
@@ -54,13 +57,14 @@ public class RuleData {
         this.value = "";
         this.description = "";
         this.localDescription = "";
-        this.extra = "";
+        this.extraDescription = "";
+        this.localExtra = "";
         this.type = getClass();
         this.suggestions = List.of();
         this.categories = List.of();
     }
 
-    public RuleData(String manager, String name, String localName, Class<?> type, String defaultValue, String value, String description, String localDescription, String extra, List<String> suggestions, List<Map.Entry<String, String>> categories) {
+    public RuleData(String manager, String name, String localName, Class<?> type, String defaultValue, String value, String description, String localDescription, String extra, String localExtra, List<String> suggestions, List<Map.Entry<String, String>> categories) {
         this.manager = manager;
         this.name = name;
         this.localName = localName;
@@ -68,7 +72,8 @@ public class RuleData {
         this.value = value;
         this.description = description;
         this.localDescription = localDescription;
-        this.extra = extra;
+        this.extraDescription = extra;
+        this.localExtra = localExtra;
         this.type = type;
         this.suggestions = suggestions;
         this.categories = categories;
@@ -88,7 +93,8 @@ public class RuleData {
         buf.writeUtf(this.description);
         buf.writeUtf(this.localDescription);
 
-        buf.writeUtf(this.extra);
+        buf.writeUtf(this.extraDescription);
+        buf.writeUtf(this.localExtra);
 
         buf.writeCollection(suggestions, FriendlyByteBuf::writeUtf);
         buf.writeCollection(categories, (bf, entry) -> {
@@ -108,6 +114,7 @@ public class RuleData {
                 buf.readUtf(), //desc
                 buf.readUtf(), //localDesc
                 buf.readUtf(), //extra
+                buf.readUtf(), //localExtra
                 buf.readList(FriendlyByteBuf::readUtf), //suggestions
                 buf.readList((bf) -> Map.entry(bf.readUtf(), bf.readUtf())) //categories
         );
@@ -133,9 +140,9 @@ public class RuleData {
         };
     }
 
-    public static String getExtraDesc(String name) {
-        if (CarpetServer.settingsManager.getCarpetRule(name) == null) return "";
-        return c(CarpetServer.settingsManager.getCarpetRule(name).extraInfo()).getString();
+    public static String getExtraDesc(String name, SettingsManager settingsManager) {
+        if (settingsManager.getCarpetRule(name) == null) return "";
+        return c(settingsManager.getCarpetRule(name).extraInfo()).getString();
     }
 
     public static Component c(List<Component> list) {
@@ -146,8 +153,6 @@ public class RuleData {
         //?} else {
         /*var var0 = MutableComponent.create(ComponentContents.EMPTY);
          *///?}
-        if (!ScreenUtils.pressShift) return var0.append("\n")
-                .append(Component.translatable("gui.screen.tooltip.extra"));
         for (Component component : list) {
             var0.append("\n" + component.getString());
         }
